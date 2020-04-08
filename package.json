@@ -1,0 +1,38 @@
+{
+	"name": "bmi",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "NODE_ENV=development nodemon",
+		"test": "jest"
+	},
+	"author": "",
+	"license": "ISC",
+	"jest": {
+		"preset": "ts-jest",
+		"testEnvironment": "node"
+	},
+	"nodemonConfig": {
+		"watch": [
+			"src"
+		],
+		"ext": "ts",
+		"ignore": [
+			"src/**/*.spec.ts"
+		],
+		"exec": "node --inspect -r ts-node/register -r tsconfig-paths/register ./src/index.ts"
+	},
+	"devDependencies": {
+		"@types/jest": "^25.2.1",
+		"jest": "^25.2.7",
+		"nodemon": "^2.0.2",
+		"ts-jest": "^25.3.1",
+		"ts-node": "^8.8.2",
+		"tsconfig-paths": "^3.9.0",
+		"typescript": "^3.8.3"
+	},
+	"dependencies": {
+		"@types/node": "^13.11.0"
+	}
+}
