@@ -2,4 +2,6 @@
 
 This is node.js project which shows the integration of several frameworks together to create a complete node.js app.
 
-## Frameworks Used
+## Tools/Features Used
+
+-   Typescript
