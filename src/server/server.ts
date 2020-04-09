@@ -52,13 +52,19 @@ export const Server: RequestListener = (request, response) => {
 		} else {
 			const height = parseFloat(parsedURL.searchParams.get("height"));
 			const weight = parseFloat(parsedURL.searchParams.get("weight"));
-			const bmi = bmiCalculator(height, weight);
-			const label = bmiClassifier(bmi);
+			const bmiResult = bmiCalculator(height, weight);
+			const label = bmiClassifier(bmiResult);
+			const bmi = parseFloat(bmiResult.toFixed(2));
 			const returnObj = { bmi, label };
 			response.statusCode = 200;
+			response.setHeader("Content-Type", "application/json");
 			response.write(JSON.stringify(returnObj));
 			response.end();
 		}
+		//HTTP healthcheck endpoint for Kubernetes liveness, readiness, or startup probes
+	} else if (request.method === "GET" && parsedURL.pathname === "/healthz") {
+		response.statusCode = 200;
+		response.end("Healthy status : 200 (server is healthy)");
 	} else {
 		response.statusCode = 404;
 		response.end();
