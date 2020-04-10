@@ -1,21 +1,5 @@
 import * as http from "http";
 import { Server } from "./server";
-import * as debugAgent from "@google-cloud/debug-agent";
-import * as profiler from "@google-cloud/profiler";
-
-debugAgent.start({
-	serviceContext: {
-		service: process.env.SERVICE || "bmi-1",
-		version: process.env.VERSION || "1",
-	},
-});
-
-profiler.start({
-	serviceContext: {
-		service: process.env.SERVICE || "bmi-1",
-		version: process.env.VERSION || "1",
-	},
-});
 
 const port = process.env.PORT || 3000;
 
