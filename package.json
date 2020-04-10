@@ -44,7 +44,6 @@
 	"dependencies": {
 		"@google-cloud/debug-agent": "^4.2.2",
 		"@google-cloud/profiler": "^3.0.1",
-		"@google-cloud/trace-agent": "^4.2.5",
 		"@types/node": "^13.11.0"
 	}
 }
