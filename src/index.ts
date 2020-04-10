@@ -1,19 +1,19 @@
 import * as http from "http";
 import { Server } from "./server";
+import * as debugAgent from "@google-cloud/debug-agent";
+import * as profiler from "@google-cloud/profiler";
 
-require("@google-cloud/debug-agent").start({
+debugAgent.start({
 	serviceContext: {
 		service: process.env.SERVICE || "bmi-1",
 		version: process.env.VERSION || "1",
-		logLevel: "3",
 	},
 });
 
-require("@google-cloud/profiler").start({
+profiler.start({
 	serviceContext: {
 		service: process.env.SERVICE || "bmi-1",
 		version: process.env.VERSION || "1",
-		logLevel: "3",
 	},
 });
 
