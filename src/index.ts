@@ -1,6 +1,24 @@
 import * as http from "http";
 import { Server } from "./server";
 
+require("@google-cloud/trace-agent").start();
+
+require("@google-cloud/debug-agent").start({
+	serviceContext: {
+		service: process.env.SERVICE || "bmi-1",
+		version: process.env.VERSION || "1",
+		logLevel: "3",
+	},
+});
+
+require("@google-cloud/profiler").start({
+	serviceContext: {
+		service: process.env.SERVICE || "bmi-1",
+		version: process.env.VERSION || "1",
+		logLevel: "3",
+	},
+});
+
 const port = process.env.PORT || 3000;
 
 const App = http.createServer(Server);

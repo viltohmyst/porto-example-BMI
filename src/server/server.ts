@@ -14,6 +14,7 @@ export const Server: RequestListener = (request, response) => {
 		console.error(err);
 		response.statusCode = 400;
 		response.end();
+		console.error(err);
 	});
 
 	response.on("error", (err) => {
@@ -49,6 +50,7 @@ export const Server: RequestListener = (request, response) => {
 			response.statusCode = 422;
 			response.write(`Error Description:\r\n${result.errorMessage}`);
 			response.end();
+			console.log(result.errorMessage);
 		} else {
 			const height = parseFloat(parsedURL.searchParams.get("height"));
 			const weight = parseFloat(parsedURL.searchParams.get("weight"));
@@ -60,6 +62,7 @@ export const Server: RequestListener = (request, response) => {
 			response.setHeader("Content-Type", "application/json");
 			response.write(JSON.stringify(returnObj));
 			response.end();
+			console.log("Ok");
 		}
 		//HTTP healthcheck endpoint for Kubernetes liveness, readiness, or startup probes
 	} else if (request.method === "GET" && parsedURL.pathname === "/healthz") {

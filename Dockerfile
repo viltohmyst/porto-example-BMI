@@ -1,4 +1,4 @@
-FROM node:12-slim as base
+FROM node:10-slim as base
 ENV NODE_ENV=production
 EXPOSE 3000
 ENV PORT 3000
