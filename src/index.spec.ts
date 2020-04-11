@@ -61,7 +61,7 @@ describe("Endpoint Test", () => {
 				});
 		});
 
-		it("should return status Ok 200 with underweight label when using valid inputs", (done) => {
+		it("should return status a Ok 200 with underweight label when using valid inputs", (done) => {
 			mockRequest
 				.get("/")
 				.set("Accept", "application/json")
