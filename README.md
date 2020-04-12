@@ -131,7 +131,7 @@ npm run test:docker
 
 This will initiate "jest --watchAll" which will rerun the test runner on every change of \*.spec.ts files.
 
-# Typescript (Javascript) Programming Language Features
+# Typescript (and Javascript) Programming Language Features
 
 This app shows the application of several different programming paradigm and language features.
 
