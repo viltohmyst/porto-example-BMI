@@ -1,75 +1,72 @@
-/*
- * Since this application is a small application (only a single route), it would
- * be overkill to import an external dependency for web framework (such as express.js),
- * hence we just use the native node.js provided libararies.
- */
-import * as url from "url";
+import { MiniWebFramework, route } from "../util/miniWebFramework";
+import { IncomingMessage, ServerResponse } from "http";
 import { URLValidator } from "../util";
 import { bmiCalculator, bmiClassifier } from "../bmi-calculator";
-import { RequestListener } from "http";
+import { URL } from "url";
 
-export const Server: RequestListener = (request, response) => {
-	//Callbacks for handling "General Errors"
-	request.on("error", (err) => {
-		console.error(err);
-		response.statusCode = 400;
-		response.end();
-		console.error(err);
-	});
+/**
+ * The Server class inherits from the MiniWebFramework and implements
+ * the concrete "routes" as well as the endpoint callbacks which
+ * make up the application
+ *
+ * @export
+ * @class Server
+ * @extends {MiniWebFramework}
+ */
+export class Server extends MiniWebFramework {
+	// The main route where BMI queries will be routed
+	@route("/")
+	main(request: IncomingMessage, response: ServerResponse) {
+		const parsedURL = new URL(
+			request.url,
+			`http://${request.headers.host}`
+		);
 
-	response.on("error", (err) => {
-		console.error(err);
-	});
+		// Handle incoming get requests, if it was a POST or other HTTP method, then implement another if clause
+		if (request.method === "GET") {
+			//Create url validator to check the correctness of API endpoint inputs from the client
+			//which is a height and weight, each have to be a number and within a sane range
+			const urlValidator = new URLValidator();
+			urlValidator.shouldHaveNumberofQuery(2);
+			urlValidator
+				.shouldHaveQuery("height")
+				.isFloat()
+				.greaterThan(50)
+				.lessThan(300);
+			urlValidator
+				.shouldHaveQuery("weight")
+				.isFloat()
+				.greaterThan(20)
+				.lessThan(300);
 
-	//parse the URL to handle routing and check for existence of queries
-	const parsedURL = new url.URL(
-		request.url,
-		`http://${request.headers.host}`
-	);
-
-	//Only handle GET methods and the pathname "/"
-	//All other methods and urls are returned with a 404 code
-	if (request.method === "GET" && parsedURL.pathname === "/") {
-		//Create url validator to check the correctness of API endpoint inputs from the client
-		//which is a height and weight, each have to be a number and within a sane range
-		const urlValidator = new URLValidator();
-		urlValidator.shouldHaveNumberofQuery(2);
-		urlValidator
-			.shouldHaveQuery("height")
-			.isFloat()
-			.greaterThan(50)
-			.lessThan(300);
-		urlValidator
-			.shouldHaveQuery("weight")
-			.isFloat()
-			.greaterThan(20)
-			.lessThan(300);
-
-		const result = urlValidator.checkURLValidity(parsedURL);
-		if (result.passed === false) {
-			response.statusCode = 422;
-			response.write(`Error Description:\r\n${result.errorMessage}`);
-			response.end();
-			console.log(result.errorMessage);
-		} else {
-			const height = parseFloat(parsedURL.searchParams.get("height"));
-			const weight = parseFloat(parsedURL.searchParams.get("weight"));
-			const bmiResult = bmiCalculator(height, weight);
-			const label = bmiClassifier(bmiResult);
-			const bmi = parseFloat(bmiResult.toFixed(2));
-			const returnObj = { bmi, label };
-			response.statusCode = 200;
-			response.setHeader("Content-Type", "application/json");
-			response.write(JSON.stringify(returnObj));
-			response.end();
-			console.log("Ok");
+			const result = urlValidator.checkURLValidity(parsedURL);
+			if (result.passed === false) {
+				response.statusCode = 422;
+				response.write(`Error Description:\r\n${result.errorMessage}`);
+				response.end();
+				console.log(result.errorMessage);
+			} else {
+				const height = parseFloat(parsedURL.searchParams.get("height"));
+				const weight = parseFloat(parsedURL.searchParams.get("weight"));
+				const bmiResult = bmiCalculator(height, weight);
+				const label = bmiClassifier(bmiResult);
+				const bmi = parseFloat(bmiResult.toFixed(2));
+				const returnObj = { bmi, label };
+				response.statusCode = 200;
+				response.setHeader("Content-Type", "application/json");
+				response.write(JSON.stringify(returnObj));
+				response.end();
+				console.log("Ok");
+			}
 		}
-		//HTTP healthcheck endpoint for Kubernetes liveness, readiness, or startup probes
-	} else if (request.method === "GET" && parsedURL.pathname === "/healthz") {
-		response.statusCode = 200;
-		response.end("Healthy status : 200 (server is healthy)");
-	} else {
-		response.statusCode = 404;
-		response.end();
 	}
-};
+
+	// The route for docker swarm or Kubernetes HTTP healthchecks
+	@route("/healthz")
+	healthCheck(request: IncomingMessage, response: ServerResponse) {
+		if (request.method === "GET") {
+			response.statusCode = 200;
+			response.end("Healthy status : 200 (server is healthy)");
+		}
+	}
+}

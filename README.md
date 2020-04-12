@@ -4,6 +4,31 @@ This is node.js project which shows the integration of several frameworks togeth
 
 This app uses no frameworks and has zero production dependencies except the reflection-metadata polyfill. You can use this repo as a starting template for your own project which uses Typescript + Jest + Supertest + VSCode IDE.
 
+## How to Use the Service Endpoint
+
+**Short summary for local environment:**
+
+Run **npm run build** and then **npm run start**, send a http request to localhost with the following signature (for example) :
+```
+localhost:3000/?height=170&weight=70
+```
+You should get a JSON response like below :
+```json
+{
+    "bmi": 24.22,
+    "label": "normal"
+}
+```
+
+**Accessing my deployed endpoint**
+
+I am providing a http address for which you can test the http endpoint. As you can read on, it is deployed on google cloud with GKE (Google Kubernetes Engine). The deployed endpoint is not accessed with port 3000 but rather port 80 (uses port mapping at the exposed service).
+
+```
+http://35.240.171.244:80/?height=170&weight=71
+```
+I will not be providing the http endpoint indefinetely though, and may go down without further notice.
+
 ## Features
 
 -   Input validation mini-framework (used in this app to validate param query inputs).
@@ -145,6 +170,32 @@ private queryRuleArray: Rule[] = [];
 The example above shows how Typescript can be used to define an interface
 
 ## Aspect Oriented Programming
+
+The routing functionality has been implemented with a @route decorator. This decorator serves as a "point-cut" in aspect oriented programming. Such us of the paradigm in routing functionality is common practice in javascript, so I implemented a simple version in this app.
+
+By using decorators we can avoid nested "If" statements for routing functionality, compare how routing is done in the v1.1.x tags compared to the v1.2.x tags in this repo. To declare a route, simply create a class which inherits from the **MiniWebFramework** class defined in *"/src/util/miniWebFramework.ts"* like so :
+
+```typescript
+class Controller extends MiniWebFramework {
+
+    // define a http endpoint path
+    @route("/somepath")
+    someCallback(request, response){
+        // do some stuff with request
+        //...
+        
+        // write a response
+        response.write("a response");
+        response.end()
+    }
+
+    // define another http endpoint path
+    @route("/anotherpath")
+    anotherCallback(request, response){
+        // do some other stuff
+    }
+}
+```
 
 ## Functional Programming
 

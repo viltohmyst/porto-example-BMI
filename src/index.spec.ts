@@ -3,14 +3,14 @@ import { Server } from "./server";
 import request from "supertest";
 import * as http from "http";
 
-let App: http.Server;
+let App: Server;
 let mockRequest: request.SuperTest<request.Test>;
 describe("Endpoint Test", () => {
 	beforeAll(() => {
-		App = http.createServer(Server);
-		mockRequest = request(App);
+		App = new Server();
+		mockRequest = request(App.getServer());
 	});
-	describe("Healthcheck : /healthz", () => {
+	describe("Healthcheck: /healthz", () => {
 		it("should return status Ok 200 when server is up and running", (done) => {
 			mockRequest
 				.get("/healthz")

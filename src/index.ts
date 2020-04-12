@@ -1,16 +1,23 @@
-import * as http from "http";
+/**
+ * The proto-example-bmi App
+ *
+ * This app show-cases how a nodejs + typescript
+ *  + Jest + Supertest + Docker may be configured
+ * along with several different typescript language features.
+ *
+ * @file   This is the main entry file of the program
+ * @author M. Hakim Adiprasetya
+ */
+
 import { Server } from "./server";
 
-const port = process.env.PORT || 3000;
-
-const App = http.createServer(Server);
+const port = parseInt(process.env.PORT) || 3000;
+const App = new Server();
 console.log(`Server running on port: ${port}`);
 
 // cleanup function when server should shutdown
 function shutdown() {
-	// NOTE: server.close is for express based apps
-	// If using hapi, use `server.stop`
-	App.close(function onServerClosed(err) {
+	App.getServer().close(function onServerClosed(err) {
 		if (err) {
 			console.error(err);
 			process.exitCode = 1;

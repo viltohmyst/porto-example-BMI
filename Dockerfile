@@ -36,11 +36,11 @@ RUN /microscanner ${MICROSCANNER_TOKEN}
 RUN echo "No vulnerabilities!"
 
 FROM scan as pre-prod
+COPY . .
 RUN npm run build
-RUN rm -rf ./node/node_modules
 
 FROM base as prod
-COPY --from=pre-prod /node/app/dist/ /app
-WORKDIR /app
+COPY --from=pre-prod /node /node
+WORKDIR /node/app/dist
 USER node
 CMD ["node", "index.js"]
